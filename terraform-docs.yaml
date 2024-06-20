@@ -1,0 +1,28 @@
+formatter: "markdown table"
+content: |-
+
+  ------------------------------------------------------------------------------------------------------------
+  # Terraform
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  ## Usage
+  Basic usage of this module is as follows:
+
+  ```hcl
+  {{ include "./example/main.tf"}}
+  ```
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+      <!-- BEGIN_AUTOMATED_TF_DOCS_BLOCK -->
+      {{ .Content }}
+      <!-- END_AUTOMATED_TF_DOCS_BLOCK -->
