@@ -14,11 +14,21 @@ module "key_vault" {
   enabled_for_deployment      = false
   enabled_for_disk_encryption = false
   sku_name                    = "premium"
-  soft_delete_retention_days  = 70
+  soft_delete_retention_days  = 80
 
   resource_group = {
     name     = data.azurerm_resource_group.this.name
     location = data.azurerm_resource_group.this.location
+  }
+
+  network = {
+    name                = "d-auea-vn-shared"
+    resource_group_name = "d-auea-rg-shared"
+    subnet_name         = ["d-auea-sn-sandpitcolin-logicapp"]
+    private_endpoint = {
+      private_dns_zone_name = "privatelink.vaultcore.azure.net"
+      subnet_name           = "d-auea-sn-sandpitcolin-private"
+    }
   }
 
   role_assignment = [
@@ -32,5 +42,3 @@ module "key_vault" {
     }
   ]
 }
-
-

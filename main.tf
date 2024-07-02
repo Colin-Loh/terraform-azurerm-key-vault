@@ -30,7 +30,7 @@ resource "azurerm_key_vault" "this" {
   }
 }
 
-data "azurerm_subnet" "pe" {
+data "azurerm_subnet" "private_endpoint" {
   for_each = var.network.private_endpoint.subnet_name != null ? { enabled = true } : {}
 
   name                 = var.network.private_endpoint.subnet_name
@@ -38,7 +38,7 @@ data "azurerm_subnet" "pe" {
   resource_group_name  = var.network.resource_group_name
 }
 
-data "azurerm_private_dns_zone" "pe" {
+data "azurerm_private_dns_zone" "private_endpoint" {
   for_each = var.network.private_endpoint.private_dns_zone_name != null ? { enabled = true } : {}
 
   name                = var.network.private_endpoint.private_dns_zone_name
@@ -51,12 +51,12 @@ resource "azurerm_private_endpoint" "this" {
   name                          = format("%s-%s", azurerm_key_vault.this.name, "pe")
   resource_group_name           = var.resource_group.name
   location                      = var.resource_group.location
-  subnet_id                     = data.azurerm_subnet.pe["enabled"].id
+  subnet_id                     = data.azurerm_subnet.private_endpoint["enabled"].id
   custom_network_interface_name = format("%s-%s", replace(azurerm_key_vault.this.name, "-", ""), "nic")
 
   private_dns_zone_group {
     name                 = format("%s-%s", azurerm_key_vault.this.name, "privatednszonegroup")
-    private_dns_zone_ids = [data.azurerm_private_dns_zone.pe["enabled"].id]
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.private_endpoint["enabled"].id]
   }
 
   private_service_connection {
